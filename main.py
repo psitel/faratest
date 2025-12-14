@@ -5,7 +5,6 @@ from pydantic import BaseModel
 import sqlite3
 import random
 from datetime import datetime
-import os
 
 app = FastAPI()
 
