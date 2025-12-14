@@ -189,7 +189,7 @@
                     return;
                 }
                 
-                showResult(data.greeting, "success");
+                showResult(`${data.greeting}. Total saludos: ${data.total}`, "success");
             } catch (err) {
                 showResult("Error de conexión: " + err.message, "error");
             }
