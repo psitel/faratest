@@ -13,7 +13,7 @@ SALUDOS = [
     "¿Qué tal {name}?",
     "ola {name}, ke ase?",
     "Encantado de verte, {name}",
-    "Buenas, {name}",
+    "Buenaaaas... {name}",
     "Ey {name}, ¿todo bien?",
     "Saludos, {name}",
     "Hola bro, {name}"
