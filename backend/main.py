@@ -1,22 +1,30 @@
-from flask import Flask, request, jsonify, send_from_directory
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 import sqlite3
-import os
 import random
 from datetime import datetime
+import os
 
-app = Flask(__name__, static_folder="../frontend")
+app = FastAPI()
+
+app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
+
+class NameRequest(BaseModel):
+    name: str
 
 DB_PATH = "database.db"
 
 SALUDOS = [
     "Hola {name}",
     "¿Qué tal {name}?",
-    "ola {name}, ke ase?",
+    "¿Qué hay, {name}?",
     "Encantado de verte, {name}",
-    "Buenaaaas... {name}",
+    "Buenas, {name}",
     "Ey {name}, ¿todo bien?",
     "Saludos, {name}",
-    "Hola bro, {name}"
+    "Bienvenido, {name}"
 ]
 
 def init_db():
@@ -32,20 +40,21 @@ def init_db():
     conn.commit()
     conn.close()
 
-@app.route("/")
+@app.on_event("startup")
+def startup():
+    init_db()
+
+@app.get("/")
 def root():
-    return send_from_directory(app.static_folder, "index.html")
+    return FileResponse("frontend/index.html")
 
-@app.route("/api/greet", methods=["POST"])
-def greet():
-    data = request.get_json(silent=True) or {}
-    name = data.get("name", "").strip()
-
+@app.post("/api/greet")
+def greet(payload: NameRequest):
+    name = payload.name.strip()
     if not name:
-        return jsonify({"error": "Falta el nombre"}), 400
+        raise HTTPException(status_code=400, detail="Falta el nombre")
 
-    saludo_template = random.choice(SALUDOS)
-    saludo = saludo_template.format(name=name)
+    saludo = random.choice(SALUDOS).format(name=name)
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -61,12 +70,7 @@ def greet():
     conn.commit()
     conn.close()
 
-    return jsonify({
+    return {
         "greeting": saludo,
         "total": total
-    })
-
-if __name__ == "__main__":
-    init_db()
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    }
