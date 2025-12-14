@@ -21,9 +21,9 @@ SALUDOS = [
     "¿Qué hay, {name}?",
     "Encantado de verte, {name}",
     "Buenas, {name}",
-    "Ey {name}, ¿todo bien?",
+    "Hey {name}, bro ¿todo bien?",
     "Saludos, {name}",
-    "Bienvenido, {name}"
+    "¿Ke passa en tu casa, {name}?"
 ]
 
 def init_db():

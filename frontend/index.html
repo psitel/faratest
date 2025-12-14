@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -144,12 +145,13 @@
         }
     </style>
 </head>
+
 <body>
     <div class="card">
         <div class="icon">👋</div>
         <h1>Simulador Saludo v6</h1>
         <p class="subtitle">Ingresa tu maldito nombre y recibe un saludo personalizado</p>
-        
+
         <form id="form">
             <div class="form-group">
                 <label for="name">Tu nombre</label>
@@ -157,7 +159,7 @@
             </div>
             <button type="submit">Enviar Saludo</button>
         </form>
-        
+
         <div id="result" class="result"></div>
     </div>
 
@@ -168,9 +170,9 @@
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
             const name = document.getElementById("name").value.trim();
-            
+
             resultEl.classList.remove("show", "success", "error");
-            
+
             if (!name) {
                 showResult("Por favor, introduce tu nombre.", "error");
                 return;
@@ -179,27 +181,28 @@
             try {
                 const res = await fetch("/api/greet", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name })
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({name})
                 });
                 const data = await res.json();
-                
+
                 if (!res.ok) {
                     showResult("Error: " + (data.error || res.statusText), "error");
                     return;
                 }
-                
-                showResult(`${data.greeting}. Total saludos: ${data.total}`, "success");
+
+                showResult(`${data.greeting}<br>Total saludos: ${data.total}`, "success");
             } catch (err) {
                 showResult("Error de conexión: " + err.message, "error");
             }
         });
 
         function showResult(message, type) {
-            resultEl.textContent = message;
+            resultEl.innerHTML = message;
             resultEl.className = "result " + type;
             setTimeout(() => resultEl.classList.add("show"), 10);
         }
     </script>
 </body>
+
 </html>
