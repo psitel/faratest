@@ -1,11 +1,23 @@
 from flask import Flask, request, jsonify, send_from_directory
 import sqlite3
 import os
+import random
 from datetime import datetime
 
 app = Flask(__name__, static_folder="frontend")
 
 DB_PATH = "database.db"
+
+SALUDOS = [
+    "Hola {name}",
+    "¿Qué tal {name}?",
+    "ola {name}, ke ase?",
+    "Encantado de verte, {name}",
+    "Buenas, {name}",
+    "Ey {name}, ¿todo bien?",
+    "Saludos, {name}",
+    "Hola bro, {name}"
+]
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -32,6 +44,9 @@ def greet():
     if not name:
         return jsonify({"error": "Falta el nombre"}), 400
 
+    saludo_template = random.choice(SALUDOS)
+    saludo = saludo_template.format(name=name)
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
@@ -47,7 +62,7 @@ def greet():
     conn.close()
 
     return jsonify({
-        "greeting": f"Hola {name}",
+        "greeting": saludo,
         "total": total
     })
 
@@ -55,4 +70,3 @@ if __name__ == "__main__":
     init_db()
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
